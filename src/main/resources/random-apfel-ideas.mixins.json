@@ -3,7 +3,7 @@
 	"package": "io.github.apfelrauber.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"ExampleMixin"
+		"RandomIdeasMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

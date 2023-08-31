@@ -16,10 +16,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"io.github.apfelrauber.ExampleMod"
+			"io.github.apfelrauber.RandomIdeasMain"
 		],
 		"client": [
-			"io.github.apfelrauber.ExampleModClient"
+			"io.github.apfelrauber.RandomIdeasClient"
 		]
 	},
 	"mixins": [
