@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "random-apfel-ideas",
+	"version": "${version}",
+	"name": "Random Apfel Ideas",
+	"description": "",
+	"authors": [
+		"ApfelRauber"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/random-apfel-ideas/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"io.github.apfelrauber.ExampleMod"
+		],
+		"client": [
+			"io.github.apfelrauber.ExampleModClient"
+		]
+	},
+	"mixins": [
+		"random-apfel-ideas.mixins.json",
+		{
+			"config": "random-apfel-ideas.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.14.22",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
