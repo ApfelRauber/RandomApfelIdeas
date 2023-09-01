@@ -11,7 +11,7 @@
 		"homepage": "https://fabricmc.net/",
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
-	"license": "CC0-1.0",
+	"license": "custom",
 	"icon": "assets/random-apfel-ideas/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -23,11 +23,7 @@
 		]
 	},
 	"mixins": [
-		"random-apfel-ideas.mixins.json",
-		{
-			"config": "random-apfel-ideas.client.mixins.json",
-			"environment": "client"
-		}
+		"random-apfel-ideas.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.14.22",
