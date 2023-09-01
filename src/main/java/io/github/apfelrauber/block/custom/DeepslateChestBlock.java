@@ -100,7 +100,7 @@ public class DeepslateChestBlock extends BlockWithEntity implements BlockEntityP
 
             if(progess < 4) return ActionResult.SUCCESS;
 
-            NamedScreenHandlerFactory screenHandlerFactory = state.createScreenHandlerFactory(world, pos);
+            NamedScreenHandlerFactory screenHandlerFactory = (DeepslateChestBlockEntity) world.getBlockEntity(pos);
 
             if (screenHandlerFactory != null) {
                 player.openHandledScreen(screenHandlerFactory);

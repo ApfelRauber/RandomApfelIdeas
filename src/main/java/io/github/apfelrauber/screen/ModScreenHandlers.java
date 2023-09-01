@@ -8,7 +8,7 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 
 public class ModScreenHandlers {
-    public static ScreenHandlerType<DeepslateChestScreenHandler> DEEPSLATE_CHEST_SCREEN_HANDLER = new ScreenHandlerType<>(DeepslateChestScreenHandler::new, null);
+    public static ExtendedScreenHandlerType<DeepslateChestScreenHandler> DEEPSLATE_CHEST_SCREEN_HANDLER = new ExtendedScreenHandlerType<>(DeepslateChestScreenHandler::new);
 
     public static void registerScreenHandlers() {
         Registry.register(Registries.SCREEN_HANDLER, new Identifier(RandomIdeasMain.MOD_ID, "deepslate_chest_screen_handler"), DEEPSLATE_CHEST_SCREEN_HANDLER);

@@ -1,5 +1,8 @@
 package io.github.apfelrauber.screen;
 
+import io.github.apfelrauber.block.entity.DeepslateChestBlockEntity;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.util.math.Vector2f;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -10,34 +13,53 @@ import net.minecraft.screen.ArrayPropertyDelegate;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.util.math.BlockPos;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class DeepslateChestScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private final PropertyDelegate propertyDelegate;
+    public final Vector2f[] slotPositions = new Vector2f[9];
 
-    public DeepslateChestScreenHandler(int syncId, PlayerInventory inventory){
-        this(syncId, inventory, new SimpleInventory(9), new ArrayPropertyDelegate(5));
+    public DeepslateChestScreenHandler(int syncId, PlayerInventory inventory, PacketByteBuf packetByteBuf){
+        this(syncId, inventory, new SimpleInventory(9), new ArrayPropertyDelegate(6), packetByteBuf.readBlockPos());
     }
 
-    public DeepslateChestScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate delegate) {
+    public DeepslateChestScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate delegate, BlockPos pos) {
         super(ModScreenHandlers.DEEPSLATE_CHEST_SCREEN_HANDLER, syncId);
         checkSize(inventory, 9);
         this.inventory = inventory;
-        inventory.onClose(playerInventory.player);
+        inventory.onOpen(playerInventory.player);
         this.propertyDelegate = delegate;
 
-        for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(inventory, i, 8 + i * 18, 15));
-            //TODO: CORRECT COORDINATES; ?CUSTOM METHOD WITH RANDOM SLOT LOCATIONS DEPENDING ON LOOTTABLE? -> GENERATED TEXTURES!
-        }
-
+        generateChestSlots(inventory, pos);
         addPlayerInventory(playerInventory);
         addPlayerHotbar(playerInventory);
 
-        addProperties(delegate);
+        this.addProperties(delegate);
     }
 
-    //TODO: MAYBE ADD LID ANIMATION HERE? PROBABLY IN DeepslateChestBlockEntity (would be isOpening() and getScaledProgess() or something)
+    private void generateChestSlots(Inventory inventory, BlockPos pos){
+        int slotSeed = pos.getX()*9876 + pos.getY()*1234 + pos.getZ()*5678;
+        List<Vector2f> possibleSlots = new ArrayList<>(27);
+
+        for (int i = 0; i < 3; ++i) {
+            for (int l = 0; l < 9; ++l) {
+                possibleSlots.add(new Vector2f(8 + l * 18, 15 + i * 18));
+            }
+        }
+
+        Collections.shuffle(possibleSlots, new Random(slotSeed));
+
+        for (int i = 0; i < 9; ++i) {
+            this.addSlot(new Slot(inventory, i, (int) possibleSlots.get(i).getX(), (int) possibleSlots.get(i).getY()));
+            slotPositions[i] = possibleSlots.get(i);
+        }
+    }
 
     @Override
     public ItemStack quickMove(PlayerEntity player, int invSlot) {
@@ -70,14 +92,14 @@ public class DeepslateChestScreenHandler extends ScreenHandler {
     private void addPlayerInventory(PlayerInventory playerInventory) {
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 68 + i * 18));
+                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 84 + i * 18));
             }
         }
     }
 
     private void addPlayerHotbar(PlayerInventory playerInventory) {
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 144));
+            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
         }
     }
 }

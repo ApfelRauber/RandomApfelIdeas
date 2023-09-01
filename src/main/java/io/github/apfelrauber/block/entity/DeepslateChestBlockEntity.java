@@ -2,6 +2,7 @@ package io.github.apfelrauber.block.entity;
 
 import io.github.apfelrauber.RandomIdeasMain;
 import io.github.apfelrauber.screen.DeepslateChestScreenHandler;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -9,9 +10,12 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -20,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-public class DeepslateChestBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
+public class DeepslateChestBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory, ImplementedInventory {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(9, ItemStack.EMPTY);
 
     protected final PropertyDelegate propertyDelegate;
@@ -29,12 +33,14 @@ public class DeepslateChestBlockEntity extends BlockEntity implements NamedScree
     private int cooldown = 0;
     private int maxCooldown = 20;
     private int sculkLevel = 0;
+    private int slotSeed;
 
     public DeepslateChestBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.DEEPLSATE_CHEST, pos, state);
 
         Random r = new Random();
         this.sculkLevel = r.nextInt(4);
+        this.slotSeed = pos.getX()*9876 + pos.getY()*1234 + pos.getZ()*5678;
 
         this.propertyDelegate = new PropertyDelegate() {
             @Override
@@ -45,6 +51,7 @@ public class DeepslateChestBlockEntity extends BlockEntity implements NamedScree
                     case 2: return DeepslateChestBlockEntity.this.cooldown;
                     case 3: return DeepslateChestBlockEntity.this.maxCooldown;
                     case 4: return DeepslateChestBlockEntity.this.sculkLevel;
+                    case 5: return DeepslateChestBlockEntity.this.slotSeed;
                     default: return 0;
                 }
             }
@@ -57,12 +64,13 @@ public class DeepslateChestBlockEntity extends BlockEntity implements NamedScree
                     case 2: DeepslateChestBlockEntity.this.cooldown = value; break;
                     case 3: DeepslateChestBlockEntity.this.maxCooldown = value; break;
                     case 4: DeepslateChestBlockEntity.this.sculkLevel = value; break;
+                    case 5: DeepslateChestBlockEntity.this.slotSeed = value; break;
                 }
             }
 
             @Override
             public int size() {
-                return 5;
+                return 6;
             }
         };
     }
@@ -80,7 +88,12 @@ public class DeepslateChestBlockEntity extends BlockEntity implements NamedScree
     @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        return new DeepslateChestScreenHandler(syncId, playerInventory, this, this.propertyDelegate);
+        return new DeepslateChestScreenHandler(syncId, playerInventory, this, this.propertyDelegate, this.pos);
+    }
+
+    @Override
+    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+        buf.writeBlockPos(this.pos);
     }
 
     @Override
