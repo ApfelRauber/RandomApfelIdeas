@@ -33,6 +33,9 @@ public class DeepslateChestBlockEntity extends BlockEntity implements NamedScree
     public DeepslateChestBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.DEEPLSATE_CHEST, pos, state);
 
+        Random r = new Random();
+        this.sculkLevel = r.nextInt(4);
+
         this.propertyDelegate = new PropertyDelegate() {
             @Override
             public int get(int index) {
@@ -81,12 +84,12 @@ public class DeepslateChestBlockEntity extends BlockEntity implements NamedScree
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt) {
-        super.writeNbt(nbt);
+    public void writeNbt(NbtCompound nbt) {
         Inventories.writeNbt(nbt, inventory);
         nbt.putInt("deepslate_chest.progress", progess);
         nbt.putInt("deepslate_chest.cooldown", cooldown);
         nbt.putInt("deepslate_chest.sculkLevel", sculkLevel);
+        super.writeNbt(nbt);
     }
 
     @Override
@@ -101,8 +104,7 @@ public class DeepslateChestBlockEntity extends BlockEntity implements NamedScree
     public static void tick(World world, BlockPos blockPos, BlockState blockState, DeepslateChestBlockEntity entity) {
         if(world.isClient()) return;
 
-        if(entity.cooldown > 0) entity.cooldown++; //TODO: on right-click increase cooldown by 1, if lower than 1
-        RandomIdeasMain.LOGGER.debug("cooldown is" + entity.cooldown);
+        if(entity.cooldown > 0) entity.cooldown++;
         if(entity.cooldown > entity.maxCooldown){
             moveLid(entity);
         }
@@ -111,16 +113,18 @@ public class DeepslateChestBlockEntity extends BlockEntity implements NamedScree
     private static void moveLid(DeepslateChestBlockEntity entity){
         entity.cooldown = 0;
 
+        if(entity.progess >= 5) return;
+
         Random random = new Random();
-        int n = random.nextInt(entity.sculkLevel);
+        int n;
+        if(entity.sculkLevel > 0) n = random.nextInt(entity.sculkLevel);
+        else n = 0;
+
         if (n == 0) {
             entity.progess++;
         } else {
             entity.sculkLevel--;
-            if(entity.sculkLevel < 0) RandomIdeasMain.LOGGER.warn("sculkLevel of DeepslateChestBlockEntity below 0, should not be possible!", entity);
+            if(entity.sculkLevel < 0) RandomIdeasMain.LOGGER.warn("sculkLevel of DeepslateChestBlockEntity below 0, should not be possible! ", entity);
         }
-        RandomIdeasMain.LOGGER.debug("cooldown is" + entity.cooldown);
-        RandomIdeasMain.LOGGER.debug("progess is" + entity.progess);
-        RandomIdeasMain.LOGGER.debug("sculkLevel is" + entity.sculkLevel);
     }
 }

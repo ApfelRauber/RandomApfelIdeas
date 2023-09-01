@@ -16,6 +16,7 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -38,7 +39,9 @@ public class DeepslateChestBlock extends BlockWithEntity implements BlockEntityP
     @Nullable
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getPlayerLookDirection().getOpposite()); //TODO: FIX FACING UP/DOWN CRASH
+        Direction d = ctx.getPlayerLookDirection().getOpposite();
+        if(ctx.getPlayerLookDirection() == Direction.UP || ctx.getPlayerLookDirection() == Direction.DOWN) d = Direction.NORTH;
+        return this.getDefaultState().with(FACING, d); //TODO: FIX FACING UP/DOWN CRASH IN BETTER WAY, temporary fix in place
     }
 
     @Override
@@ -79,9 +82,9 @@ public class DeepslateChestBlock extends BlockWithEntity implements BlockEntityP
     public ActionResult onUse(BlockState state, World world, BlockPos pos,
                               PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (!world.isClient) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
+            DeepslateChestBlockEntity blockEntity = (DeepslateChestBlockEntity) world.getBlockEntity(pos);
             NbtCompound nbt = new NbtCompound();
-            blockEntity.readNbt(nbt);
+            blockEntity.writeNbt(nbt);
 
             int progess = nbt.getInt("deepslate_chest.progress");
             int cooldown = nbt.getInt("deepslate_chest.cooldown");
@@ -92,9 +95,10 @@ public class DeepslateChestBlock extends BlockWithEntity implements BlockEntityP
                 nbt.putInt("deepslate_chest.cooldown", cooldown);
             }
 
+            blockEntity.readNbt(nbt);
             blockEntity.markDirty();
 
-            if(progess < 5) return ActionResult.SUCCESS;
+            if(progess < 4) return ActionResult.SUCCESS;
 
             NamedScreenHandlerFactory screenHandlerFactory = state.createScreenHandlerFactory(world, pos);
 
