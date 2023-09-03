@@ -1,0 +1,79 @@
+{
+  "variants": {
+    "facing=north,progress=0": {
+      "model": "random-apfel-ideas:block/deepslate_chest"
+    },
+    "facing=south,progress=0": {
+      "model": "random-apfel-ideas:block/deepslate_chest",
+      "y": 180
+    },
+    "facing=west,progress=0": {
+      "model": "random-apfel-ideas:block/deepslate_chest",
+      "y": 270
+    },
+    "facing=east,progress=0": {
+      "model": "random-apfel-ideas:block/deepslate_chest",
+      "y": 90
+    },
+    "facing=north,progress=1": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_1"
+    },
+    "facing=south,progress=1": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_1",
+      "y": 180
+    },
+    "facing=west,progress=1": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_1",
+      "y": 270
+    },
+    "facing=east,progress=1": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_1",
+      "y": 90
+    },
+    "facing=north,progress=2": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_2"
+    },
+    "facing=south,progress=2": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_2",
+      "y": 180
+    },
+    "facing=west,progress=2": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_2",
+      "y": 270
+    },
+    "facing=east,progress=2": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_2",
+      "y": 90
+    },
+    "facing=north,progress=3": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_3"
+    },
+    "facing=south,progress=3": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_3",
+      "y": 180
+    },
+    "facing=west,progress=3": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_3",
+      "y": 270
+    },
+    "facing=east,progress=3": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_3",
+      "y": 90
+    },
+    "facing=north,progress=4": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_4"
+    },
+    "facing=south,progress=4": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_4",
+      "y": 180
+    },
+    "facing=west,progress=4": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_4",
+      "y": 270
+    },
+    "facing=east,progress=4": {
+      "model": "random-apfel-ideas:block/deepslate_chest_stage_4",
+      "y": 90
+    }
+  }
+}

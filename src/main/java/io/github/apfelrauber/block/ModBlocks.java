@@ -19,7 +19,7 @@ import net.minecraft.util.Identifier;
 public class ModBlocks {
     public static final Block DEEPSLATE_CHEST = registerBlock("deepslate_chest",
             new DeepslateChestBlock(FabricBlockSettings.create().mapColor(MapColor.DEEPSLATE_GRAY).
-                    requiresTool().strength(3.0F, 6.0F).sounds(BlockSoundGroup.DEEPSLATE)));
+                    requiresTool().strength(3.0F, 6.0F).nonOpaque().sounds(BlockSoundGroup.DEEPSLATE)));
 
     public static Block registerBlock(String name, Block block){
         registerBlockItem(name, block);

@@ -10,13 +10,16 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -24,12 +27,14 @@ import org.jetbrains.annotations.Nullable;
 
 public class DeepslateChestBlock extends BlockWithEntity implements BlockEntityProvider {
     public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
+    public static final IntProperty PROGRESS = IntProperty.of("progress",0,4);
 
     public DeepslateChestBlock(Settings settings) {
         super(settings);
+        setDefaultState(getDefaultState().with(PROGRESS,0));
     }
 
-    private static VoxelShape SHAPE = Block.createCuboidShape(0, 0, 0, 16, 10, 16);
+    private static VoxelShape SHAPE = Block.createCuboidShape(0, 0, 0, 16, 11, 16);
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
@@ -39,9 +44,7 @@ public class DeepslateChestBlock extends BlockWithEntity implements BlockEntityP
     @Nullable
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        Direction d = ctx.getPlayerLookDirection().getOpposite();
-        if(ctx.getPlayerLookDirection() == Direction.UP || ctx.getPlayerLookDirection() == Direction.DOWN) d = Direction.NORTH;
-        return this.getDefaultState().with(FACING, d); //TODO: FIX FACING UP/DOWN CRASH IN BETTER WAY, temporary fix in place
+        return super.getPlacementState(ctx).with(Properties.HORIZONTAL_FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
 
     @Override
@@ -57,6 +60,7 @@ public class DeepslateChestBlock extends BlockWithEntity implements BlockEntityP
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING);
+        builder.add(PROGRESS);
     }
 
     /* BLOCK ENTITY */
@@ -86,19 +90,27 @@ public class DeepslateChestBlock extends BlockWithEntity implements BlockEntityP
             NbtCompound nbt = new NbtCompound();
             blockEntity.writeNbt(nbt);
 
-            int progess = nbt.getInt("deepslate_chest.progress");
+            int progress = nbt.getInt("deepslate_chest.progress");
             int cooldown = nbt.getInt("deepslate_chest.cooldown");
 
-            if(cooldown == 0) {
+            if(cooldown == 0 && progress < 5) {
+                world.playSound(null, pos, SoundEvents.BLOCK_POLISHED_DEEPSLATE_STEP, SoundCategory.BLOCKS, 1f, 1f);
+
                 cooldown++;
                 nbt.remove("deepslate_chest.cooldown");
                 nbt.putInt("deepslate_chest.cooldown", cooldown);
             }
 
+            world.setBlockState(pos, state.with(PROGRESS, progress));
+
             blockEntity.readNbt(nbt);
             blockEntity.markDirty();
 
-            if(progess < 4) return ActionResult.SUCCESS;
+            if(progress < 4) return ActionResult.SUCCESS;
+
+            if(progress >= 4){
+                world.playSound(null, pos, SoundEvents.BLOCK_POLISHED_DEEPSLATE_STEP, SoundCategory.BLOCKS, 1f, 1f);
+            }
 
             NamedScreenHandlerFactory screenHandlerFactory = (DeepslateChestBlockEntity) world.getBlockEntity(pos);
 
