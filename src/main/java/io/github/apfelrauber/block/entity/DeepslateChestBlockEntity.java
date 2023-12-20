@@ -39,14 +39,14 @@ public class DeepslateChestBlockEntity extends BlockEntity implements ExtendedSc
         this.propertyDelegate = new PropertyDelegate() {
             @Override
             public int get(int index) {
-                switch (index){
-                    case 0: return DeepslateChestBlockEntity.this.progress;
-                    case 1: return DeepslateChestBlockEntity.this.maxProgress;
-                    case 2: return DeepslateChestBlockEntity.this.cooldown;
-                    case 3: return DeepslateChestBlockEntity.this.maxCooldown;
-                    case 4: return DeepslateChestBlockEntity.this.slotSeed;
-                    default: return 0;
-                }
+                return switch (index) {
+                    case 0 -> DeepslateChestBlockEntity.this.progress;
+                    case 1 -> DeepslateChestBlockEntity.this.maxProgress;
+                    case 2 -> DeepslateChestBlockEntity.this.cooldown;
+                    case 3 -> DeepslateChestBlockEntity.this.maxCooldown;
+                    case 4 -> DeepslateChestBlockEntity.this.slotSeed;
+                    default -> 0;
+                };
             }
 
             @Override
